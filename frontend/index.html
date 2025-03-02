@@ -6,56 +6,24 @@
     <title>Resume Analyzer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-        }
-        .container {
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            color: #333;
-        }
-        #result {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            background: #e3f2fd;
-            color: #333;
-        }
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-        }
-        .btn-primary {
-            background-color: #667eea;
-            border-color: #667eea;
-        }
-        .btn-primary:hover {
-            background-color: #5a6fd1;
-            border-color: #5a6fd1;
-        }
-        .form-control, .form-select {
-            border-radius: 5px;
-        }
-        .form-label {
-            font-weight: bold;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="d-flex align-items-center justify-content-center vh-100">
+<body>
+    <!-- Floating Animated Objects -->
+    <div class="floating-objects">
+        <div class="floating-object circle" style="top: 10%; left: 5%;"></div>
+        <div class="floating-object triangle" style="top: 20%; left: 80%;"></div>
+        <div class="floating-object circle" style="top: 50%; left: 30%;"></div>
+        <div class="floating-object triangle" style="top: 70%; left: 60%;"></div>
+    </div>
+
+    <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
     <div class="container animate__animated animate__fadeIn">
-        <h2 class="text-center mb-4">Resume Analyzer</h2>
+        <h2><i class="fas fa-file-alt icon"></i> Resume Analyzer</h2>
         
         <form id="resumeForm">
             <div class="mb-3">
@@ -67,82 +35,47 @@
             <div class="mb-3">
                 <label for="resumeFile" class="form-label">Upload Resume</label>
                 <input type="file" id="resumeFile" class="form-control" accept=".pdf,.docx" required>
+                <div id="filePreview" class="mt-2"></div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Analyze Resume</button>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Analyze Resume
+            </button>
         </form>
         
         <div class="loading-spinner" id="loadingSpinner">
-            <div class="spinner-border text-primary" role="status">
+            <div class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-2">Analyzing Resume...</p>
         </div>
         
-        <div id="result" class="mt-4 animate__animated animate__fadeIn">
-            <h4>Analysis Result</h4>
-            <p><strong>Message:</strong> <span id="message"></span></p>
-            <p><strong>Rank:</strong> <span id="rank"></span></p>
-            <p><strong>Skills:</strong> <span id="skills"></span></p>
-            <p><strong>Total Experience:</strong> <span id="experience"></span> years</p>
-            <p><strong>Project Categories:</strong> <span id="projects"></span></p>
+        <div id="result" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Analysis Result</h4>
+                </div>
+                <div class="card-body">
+                    <p class="result-title"><strong>Message:</strong> <span id="message"></span></p>
+                    <p class="result-title"><strong>Rank:</strong></p>
+                    <div class="score-display" id="rankScore"></div>
+                    <div class="progress">
+                        <div id="rankProgress" class="progress-bar" role="progressbar" style="width: 0;"></div>
+                    </div>
+                    <p class="result-title"><strong>Total Experience:</strong> <span id="experience">0 years</span></p>
+                    <p class="result-title"><strong>Skills:</strong></p>
+                    <div class="skills-container" id="skills">
+                        <div class="empty-state">No skills found.</div>
+                    </div>
+                    <p class="result-title"><strong>Project Categories:</strong></p>
+                    <div class="projects-container" id="projects">
+                        <div class="empty-state">No project categories found.</div>
+                    </div>
+                    <button id="clearButton" class="btn btn-secondary w-100 mt-3">Clear Analysis</button>
+                </div>
+            </div>
         </div>
     </div>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch("http://127.0.0.1:8000/api/jobs/")
-                .then(response => response.json())
-                .then(data => {
-                    const jobSelect = document.getElementById("jobDescription");
-                    jobSelect.innerHTML = '<option value="">Select a Job Description</option>';
-                    data.data.forEach(job => {
-                        jobSelect.innerHTML += `<option value="${job.job_description}">${job.job_title}</option>`;
-                    });
-                })
-                .catch(error => console.error("Error fetching job descriptions:", error));
-
-            document.getElementById("resumeForm").addEventListener("submit", function (event) {
-                event.preventDefault();
-                
-                const jobDescription = document.getElementById("jobDescription").value;
-                const resumeFile = document.getElementById("resumeFile").files[0];
-                if (!jobDescription || !resumeFile) {
-                    alert("Please select a job and upload a resume.");
-                    return;
-                }
-                
-                const formData = new FormData();
-                formData.append("resume", resumeFile);
-                formData.append("job_description", jobDescription);
-                
-                document.getElementById("loadingSpinner").style.display = "block";
-                document.getElementById("result").style.display = "none";
-                
-                fetch("http://127.0.0.1:8000/api/resume/", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("loadingSpinner").style.display = "none";
-                    if (data.status) {
-                        document.getElementById("message").textContent = data.message;
-                        document.getElementById("rank").textContent = data.data.rank;
-                        document.getElementById("skills").textContent = data.data.skills.join(", ");
-                        document.getElementById("experience").textContent = data.data.total_experience;
-                        document.getElementById("projects").textContent = data.data.project_category.length ? data.data.project_category.join(", ") : "None";
-                        document.getElementById("result").style.display = "block";
-                    } else {
-                        alert("Error analyzing resume.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error analyzing resume:", error);
-                    document.getElementById("loadingSpinner").style.display = "none";
-                    alert("An error occurred while analyzing the resume.");
-                });
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
