@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Analyzer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
         }
         .container {
             max-width: 600px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #333;
         }
         #result {
             display: none;
@@ -22,11 +26,35 @@
             padding: 15px;
             border-radius: 10px;
             background: #e3f2fd;
+            color: #333;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .btn-primary {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .btn-primary:hover {
+            background-color: #5a6fd1;
+            border-color: #5a6fd1;
+        }
+        .form-control, .form-select {
+            border-radius: 5px;
+        }
+        .form-label {
+            font-weight: bold;
         }
     </style>
 </head>
 <body class="d-flex align-items-center justify-content-center vh-100">
-    <div class="container">
+    <div class="container animate__animated animate__fadeIn">
         <h2 class="text-center mb-4">Resume Analyzer</h2>
         
         <form id="resumeForm">
@@ -43,7 +71,14 @@
             <button type="submit" class="btn btn-primary w-100">Analyze Resume</button>
         </form>
         
-        <div id="result" class="mt-4">
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Analyzing Resume...</p>
+        </div>
+        
+        <div id="result" class="mt-4 animate__animated animate__fadeIn">
             <h4>Analysis Result</h4>
             <p><strong>Message:</strong> <span id="message"></span></p>
             <p><strong>Rank:</strong> <span id="rank"></span></p>
@@ -80,12 +115,16 @@
                 formData.append("resume", resumeFile);
                 formData.append("job_description", jobDescription);
                 
+                document.getElementById("loadingSpinner").style.display = "block";
+                document.getElementById("result").style.display = "none";
+                
                 fetch("http://127.0.0.1:8000/api/resume/", {
                     method: "POST",
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("loadingSpinner").style.display = "none";
                     if (data.status) {
                         document.getElementById("message").textContent = data.message;
                         document.getElementById("rank").textContent = data.data.rank;
@@ -97,7 +136,11 @@
                         alert("Error analyzing resume.");
                     }
                 })
-                .catch(error => console.error("Error analyzing resume:", error));
+                .catch(error => {
+                    console.error("Error analyzing resume:", error);
+                    document.getElementById("loadingSpinner").style.display = "none";
+                    alert("An error occurred while analyzing the resume.");
+                });
             });
         });
     </script>
