@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #e3f2fd;
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center vh-100">
+    <div class="container">
+        <h2 class="text-center mb-4">Resume Analyzer</h2>
+        
+        <form id="resumeForm">
+            <div class="mb-3">
+                <label for="jobDescription" class="form-label">Select Job Description</label>
+                <select id="jobDescription" class="form-select" required>
+                    <option value="">Loading job descriptions...</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="resumeFile" class="form-label">Upload Resume</label>
+                <input type="file" id="resumeFile" class="form-control" accept=".pdf,.docx" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Analyze Resume</button>
+        </form>
+        
+        <div id="result" class="mt-4">
+            <h4>Analysis Result</h4>
+            <p><strong>Message:</strong> <span id="message"></span></p>
+            <p><strong>Rank:</strong> <span id="rank"></span></p>
+            <p><strong>Skills:</strong> <span id="skills"></span></p>
+            <p><strong>Total Experience:</strong> <span id="experience"></span> years</p>
+            <p><strong>Project Categories:</strong> <span id="projects"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("http://127.0.0.1:8000/api/jobs/")
+                .then(response => response.json())
+                .then(data => {
+                    const jobSelect = document.getElementById("jobDescription");
+                    jobSelect.innerHTML = '<option value="">Select a Job Description</option>';
+                    data.data.forEach(job => {
+                        jobSelect.innerHTML += `<option value="${job.job_description}">${job.job_title}</option>`;
+                    });
+                })
+                .catch(error => console.error("Error fetching job descriptions:", error));
+
+            document.getElementById("resumeForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                
+                const jobDescription = document.getElementById("jobDescription").value;
+                const resumeFile = document.getElementById("resumeFile").files[0];
+                if (!jobDescription || !resumeFile) {
+                    alert("Please select a job and upload a resume.");
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append("resume", resumeFile);
+                formData.append("job_description", jobDescription);
+                
+                fetch("http://127.0.0.1:8000/api/resume/", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        document.getElementById("message").textContent = data.message;
+                        document.getElementById("rank").textContent = data.data.rank;
+                        document.getElementById("skills").textContent = data.data.skills.join(", ");
+                        document.getElementById("experience").textContent = data.data.total_experience;
+                        document.getElementById("projects").textContent = data.data.project_category.length ? data.data.project_category.join(", ") : "None";
+                        document.getElementById("result").style.display = "block";
+                    } else {
+                        alert("Error analyzing resume.");
+                    }
+                })
+                .catch(error => console.error("Error analyzing resume:", error));
+            });
+        });
+    </script>
+</body>
+</html>
