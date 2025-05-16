@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Assistant | ResumeWise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assistant.css">
+        <script src="assistant.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>ResumeWise</span>
+                </div>
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/analyzer">Resume Analyzer</a>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                </div>
+                <a href="/analyzer" class="cta-button">Analyze Resume</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="assistant-container">
+            <div class="upload-section">
+                <h2>Your Resume</h2>
+                <div class="upload-box" id="uploadBox">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Your Resume</h3>
+                    <p>PDF, DOCX, or TXT files supported</p>
+                    <button class="cta-button" style="margin-top: 10px;">Select File</button>
+                    <input type="file" id="fileInput" class="file-input" accept=".pdf,.docx,.txt">
+                </div>
+                
+                <div class="uploaded-file" id="uploadedFile">
+                    <div class="file-info">
+                        <i class="fas fa-file-alt file-icon"></i>
+                        <div>
+                            <div id="fileName">resume.pdf</div>
+                            <div id="fileSize" style="font-size: 12px; color: var(--text-light);">2.4 MB</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-times remove-file" id="removeFile"></i>
+                </div>
+                
+                <div id="resumeUploadedContent" style="display: none;">
+                    <h3 style="margin-bottom: 15px;">Ask About Your Resume</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Here are some questions you can ask about your resume:</p>
+                    
+                    <div class="starter-questions">
+                        <div class="starter-question" data-question="How can I improve my resume for software engineering roles?">Improve for software roles</div>
+                        <div class="starter-question" data-question="What are the strengths of my resume?">Resume strengths</div>
+                        <div class="starter-question" data-question="How can I make my resume more ATS-friendly?">ATS optimization</div>
+                        <div class="starter-question" data-question="Suggest better action verbs for my experience section">Better action verbs</div>
+                        <div class="starter-question" data-question="What skills should I add based on my target job?">Skills to add</div>
+                        <div class="starter-question" data-question="Help me tailor this resume for [job title] positions">Tailor for job</div>
+                    </div>
+                </div>
+                
+                <div class="no-resume-message" id="noResumeMessage">
+                    <i class="fas fa-comment-dots"></i>
+                    <h3>Upload your resume to start chatting</h3>
+                    <p>The AI assistant will analyze your resume and provide personalized career advice.</p>
+                </div>
+            </div>
+            
+            <div class="chat-section">
+                <div class="chat-header">
+                    <i class="fas fa-robot"></i>
+                    <h2>AI Resume Assistant</h2>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <p>Hello! I'm your AI Resume Assistant. Upload your resume and I can help you:</p>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Improve your resume content</li>
+                            <li>Tailor it for specific jobs</li>
+                            <li>Prepare for interviews</li>
+                            <li>Identify skills to highlight</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="userInput" placeholder="Ask about your resume..." disabled>
+                    <button class="send-button" id="sendButton" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>How Our AI Resume Assistant Helps You</h2>
+                <p>Get personalized career guidance based on your actual resume</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-edit"></i>
+                    </div>
+                    <h3>Resume Optimization</h3>
+                    <p>Get specific suggestions to improve your resume's content and impact.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Job Targeting</h3>
+                    <p>Learn how to tailor your resume for specific job postings.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Interview Prep</h3>
+                    <p>Practice answering common interview questions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>ResumeWise</h3>
+                    <p>AI-powered resume analysis and career guidance.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Our Tools</h3>
+                    <ul class="footer-links">
+                        <li><a href="/analyzer">Resume Analyzer</a></li>
+                        <li><a href="/assistant">AI Resume Assistant</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 ResumeWise. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+</html>

@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from resumechecker.views import JobDescriptionAPI, AnalyzeResumeAPI
+from resumechecker.views import *
 
 urlpatterns = [
     path("api/jobs/", JobDescriptionAPI.as_view(), name="jobs"),
     path("api/resume/", AnalyzeResumeAPI.as_view(), name="resume"),
+    path('api/assistant/', ResumeAssistantAPI.as_view()),
+    path('api/assistant/history/<int:resume_id>/', ChatHistoryAPI.as_view()),
     path('admin/', admin.site.urls),
 ]

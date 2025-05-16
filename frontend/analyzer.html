@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <!-- Floating Animated Objects -->
+    <div class="floating-objects">
+        <div class="floating-object circle" style="top: 10%; left: 5%;"></div>
+        <div class="floating-object triangle" style="top: 20%; left: 80%;"></div>
+        <div class="floating-object circle" style="top: 50%; left: 30%;"></div>
+        <div class="floating-object triangle" style="top: 70%; left: 60%;"></div>
+    </div>
+
+    <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="container animate__animated animate__fadeIn">
+        <h2><i class="fas fa-file-alt icon"></i> Resume Analyzer</h2>
+        
+        <form id="resumeForm">
+            <div class="mb-3">
+                <label for="jobDescription" class="form-label">Select Job Description</label>
+                <select id="jobDescription" class="form-select" required>
+                    <option value="">Loading job descriptions...</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="resumeFile" class="form-label">Upload Resume</label>
+                <input type="file" id="resumeFile" class="form-control" accept=".pdf,.docx" required>
+                <div id="filePreview" class="mt-2"></div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Analyze Resume
+            </button>
+        </form>
+        
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Analyzing Resume...</p>
+        </div>
+        
+        <div id="result" class="mt-4" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Analysis Result</h4>
+                </div>
+                <div class="card-body">
+                    <p class="result-title"><strong>Message:</strong> <span id="message"></span></p>
+                    <p class="result-title"><strong>Rank:</strong></p>
+                    <div class="score-display" id="rankScore"></div>
+                    <div class="progress">
+                        <div id="rankProgress" class="progress-bar" role="progressbar" style="width: 0;"></div>
+                    </div>
+                    <p class="result-title"><strong>Total Experience:</strong> <span id="experience">0 years</span></p>
+                    <p class="result-title"><strong>Skills:</strong></p>
+                    <div class="skills-container" id="skills">
+                        <div class="empty-state">No skills found.</div>
+                    </div>
+                    <p class="result-title"><strong>Project Categories:</strong></p>
+                    <div class="projects-container" id="projects">
+                        <div class="empty-state">No project categories found.</div>
+                    </div>
+                    <button id="clearButton" class="btn btn-secondary w-100 mt-3">Clear Analysis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

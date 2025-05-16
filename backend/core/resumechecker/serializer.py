@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import JobDescription, Resume
+from .models import ChatHistory, JobDescription, Resume
 
 class JobDescriptionModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,3 +10,8 @@ class ResumeModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = '__all__'
+
+class ChatHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatHistory
+        fields = ['id', 'user_message', 'ai_response', 'created_at']

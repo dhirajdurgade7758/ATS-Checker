@@ -1,5 +1,4 @@
 import pdfplumber
-import spacy
 import os
 from groq import Groq
 import json
@@ -9,9 +8,10 @@ def extract_text_from_pdf(pdf_path):
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
             text += page.extract_text() + "\n"
+    print("text extraed from pdf")
     return text.strip()
 
-API_KEY = "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"
+API_KEY = "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"
 
 def analyze_resume_with_llm(resume_text:str, job_description:str)->dict:
     prompt = f'''
@@ -61,6 +61,8 @@ def analyze_resume_with_llm(resume_text:str, job_description:str)->dict:
         return json.loads(result)
     
     except Exception as e:
+        print("Groq API error:", e)
+
         print(e)
 
 def process_resume(pdf_path, job_description):
